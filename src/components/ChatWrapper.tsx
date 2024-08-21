@@ -1,19 +1,22 @@
 "use client"
 
-import { useChat } from "ai/react"
+import { Message, useChat } from "ai/react"
 import { Messages } from "./Messages"
+import { ChatInput } from "./ChatInput"
 
 
 
 
-export const ChatWrapper = ({ sessionId }: { sessionId: string }) => {
+export const ChatWrapper = ({ sessionId, initialMessages }: { sessionId: string, initialMessages: Message[] }) => {
   {/*usechat here is same as using useState hook to store the messages and handleInputChange to update the state*/ }
 
   // const [messages, setMessages] = useState<Message[]>([])
-  const { messages, handleInputChange, input, handleSubmit } = useChat({
+  const { messages, handleInputChange, input, handleSubmit, setInput } = useChat({
     api: "/api/chat-stream",
-    body: { sessionId }
+    body: { sessionId },
+    initialMessages,
   })
+  console.log(messages)
 
   return (
     <div className="relative min-h-full bg-zinc-900 flex divide-y divide-zinc-700 flex-col justify-between gap-2">
@@ -22,10 +25,7 @@ export const ChatWrapper = ({ sessionId }: { sessionId: string }) => {
         {/* sedning all the messages that the usechat hook returns here ai messages and the user messages */}
         <Messages messages={messages} />
       </div>
-      <form onSubmit={handleSubmit}>
-        <input className="text-black" type="text" placeholder="" onChange={handleInputChange} value={input} />
-        <button type="submit">Send</button>
-      </form>
+      <ChatInput input={input} handleInputChange={handleInputChange} handleSubmit={handleSubmit} setInput={setInput} />
     </div>
   )
 
